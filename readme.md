@@ -1,4 +1,7 @@
 # The Auld Tomes
+ Play the demo [here!](https://ajbowen249.github.io/auld-tomes-public/)
+
+
 | | |
 |-|-|
 |![screenshot_1](/gh_media/screenshot_1.png)|![screenshot_2](/gh_media/screenshot_2.png)|
