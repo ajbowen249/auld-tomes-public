@@ -891,6 +891,45 @@
 	requestAnimationFrame(p8_update_gamepads);
 
 	// End of gamepad code
+function remapWasd(eventName) {
+    function remap(event, key, keyCode) {
+        event.stopImmediatePropagation();
+        const newEvent = new KeyboardEvent(eventName, {
+            ...event,
+            key,
+            code: 'Key'+key.toUpperCase(),
+            keyCode,
+            which: keyCode,
+        });
+
+        newEvent.wasRemapped = true;
+        document.dispatchEvent(newEvent);
+    }
+
+    document.addEventListener(eventName, function(event) {
+        if (event.wasRemapped) {
+            return;
+        }
+
+        switch (event.keyCode) {
+        case 87: // W
+            remap(event, 'e', 69);
+            break;
+        case 65: // A
+            remap(event, 's', 83);
+            break;
+        case 83: // S
+            remap(event, 'd', 68);
+            break;
+        case 68: // D
+            remap(event, 'f', 70);
+            break;
+        }
+    });
+}
+
+remapWasd('keydown');
+remapWasd('keyup');
 
 
 	// key blocker. prevent browser operations while playing cart so that PICO-8 can use those keys e.g. cursors to scroll, ctrl-r to reload
@@ -1006,7 +1045,6 @@ canvas{
 </STYLE>
 
 </head>
-
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-3WD2SS9GQ1"></script>
 <script>
