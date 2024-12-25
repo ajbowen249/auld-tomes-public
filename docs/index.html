@@ -3,10 +3,92 @@
 <meta name="viewport" content="width=device-width, user-scalable=no">
 <script type="text/javascript">
 
-	// Default shell for PICO-8 0.2.2 (includes @weeble's gamepad mod 1.0)
+	// Modified from default shell for PICO-8 0.2.2 (includes @weeble's gamepad mod 1.0, and @ajbowen249's WASD hack with special game save/load mechanic)
 	// This file is available under a CC0 license https://creativecommons.org/share-your-work/public-domain/cc0/
 	// (note: "this file" does not include any cartridge or cartridge artwork injected into a derivative html file when using the PICO-8 html exporter)
 
+    // @ajbowen249's customizations
+
+
+    const currentSaveSet = 'auld_tomes_saves_v1.0';
+    class SaveHandler {
+        constructor() {
+            const saves = localStorage.getItem(currentSaveSet);
+            if (saves == undefined || saves == null) {
+                this.saves = [];
+            } else {
+                this.saves = JSON.parse(saves).map(x => ({
+                    ...x,
+                    date: new Date(JSON.parse(x.date)),
+                }));
+            }
+        }
+
+        hasSaves() {
+            return this.saves.length > 0;
+        }
+
+        getSaves() {
+            return this.saves;
+        }
+
+        getLatestSave() {
+            return this.saves[0];
+        }
+
+        addSave(str) {
+            // Just overwriting a single slot for now, but keeping the idea of multiple saves for structure
+            this.saves = [
+                {
+                    date: new Date(),
+                    str,
+                }
+            ];
+
+            this.saveToLocalStorage();
+        }
+
+        saveToLocalStorage() {
+            localStorage.setItem(currentSaveSet, JSON.stringify(this.saves.map(x => ({
+                ...x,
+                date: JSON.stringify(x.date),
+            }))))
+        }
+    }
+
+    const saveHandler = new SaveHandler();
+
+    const cmd_prefix = '[atcmd]';
+    const save_cmd = 'save:';
+
+    const logRoot = console.log;
+    console.log = (...args) => {
+        if (Array.isArray(args) && args.length === 1) {
+            const first = args[0];
+            if (typeof(first) == 'string' && first.startsWith(cmd_prefix)) {
+                cmd = first.substring(cmd_prefix.length);
+                if (cmd.startsWith(save_cmd)) {
+                    strToSave = cmd.substring(save_cmd.length);
+                    logRoot('asked to save ', strToSave);
+                    saveHandler.addSave(strToSave);
+                }
+
+                return;
+            }
+        }
+
+        logRoot(...args);
+    };
+
+    function getInitParams() {
+        if (saveHandler.hasSaves()) {
+            return [ '-p', saveHandler.getLatestSave().str ];
+        }
+
+        return [];
+    }
+
+    // end @ajbowen249's customizations
 	// options
 
 	// fullscreen, sound, close button at top when playing on touchscreen
@@ -634,6 +716,9 @@
 		e.type = "application/javascript";
 		e.src = "index.js";
 		e.id = "e_script";
+        // end @ajbowen249's customizations
+        Module["arguments"] = getInitParams();
+        // end @ajbowen249's customizations
 		
 		document.body.appendChild(e); // load and run
 
@@ -891,6 +976,49 @@
 	requestAnimationFrame(p8_update_gamepads);
 
 	// End of gamepad code
+    // @ajbowen249's customizations
+
+    function remapWasd(eventName) {
+        function remap(event, key, keyCode) {
+            event.stopImmediatePropagation();
+            const newEvent = new KeyboardEvent(eventName, {
+                ...event,
+                key,
+                code: 'Key'+key.toUpperCase(),
+                keyCode,
+                which: keyCode,
+            });
+
+            newEvent.wasRemapped = true;
+            document.dispatchEvent(newEvent);
+        }
+
+        document.addEventListener(eventName, function(event) {
+            if (event.wasRemapped) {
+                return;
+            }
+
+            switch (event.keyCode) {
+            case 87: // W
+                remap(event, 'e', 69);
+                break;
+            case 65: // A
+                remap(event, 's', 83);
+                break;
+            case 83: // S
+                remap(event, 'd', 68);
+                break;
+            case 68: // D
+                remap(event, 'f', 70);
+                break;
+            }
+        });
+    }
+
+    remapWasd('keydown');
+    remapWasd('keyup');
+
+    // end @ajbowen249's customizations
 
 
 	// key blocker. prevent browser operations while playing cart so that PICO-8 can use those keys e.g. cursors to scroll, ctrl-r to reload
@@ -982,7 +1110,7 @@ canvas{
 
 .p8_start_button{
 	cursor:pointer;
-	background:url("data:image/png;base64,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");
+	background:url("data:image/png;base64,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");
 	-repeat center;
 	-webkit-background-size:cover; -moz-background-size:cover; -o-background-size:cover; background-size:cover;
 }
