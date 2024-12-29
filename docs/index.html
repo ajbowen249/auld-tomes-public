@@ -7,88 +7,88 @@
 	// This file is available under a CC0 license https://creativecommons.org/share-your-work/public-domain/cc0/
 	// (note: "this file" does not include any cartridge or cartridge artwork injected into a derivative html file when using the PICO-8 html exporter)
 
-    // @ajbowen249's customizations
+	// @ajbowen249's customizations
 
 
-    const currentSaveSet = 'auld_tomes_saves_v1.0';
-    class SaveHandler {
-        constructor() {
-            const saves = localStorage.getItem(currentSaveSet);
-            if (saves == undefined || saves == null) {
-                this.saves = [];
-            } else {
-                this.saves = JSON.parse(saves).map(x => ({
-                    ...x,
-                    date: new Date(JSON.parse(x.date)),
-                }));
-            }
-        }
+	const currentSaveSet = 'auld_tomes_saves_v1.0';
+	class SaveHandler {
+		constructor() {
+			const saves = localStorage.getItem(currentSaveSet);
+			if (saves == undefined || saves == null) {
+				this.saves = [];
+			} else {
+				this.saves = JSON.parse(saves).map(x => ({
+					...x,
+					date: new Date(JSON.parse(x.date)),
+				}));
+			}
+		}
 
-        hasSaves() {
-            return this.saves.length > 0;
-        }
+		hasSaves() {
+			return this.saves.length > 0;
+		}
 
-        getSaves() {
-            return this.saves;
-        }
+		getSaves() {
+			return this.saves;
+		}
 
-        getLatestSave() {
-            return this.saves[0];
-        }
+		getLatestSave() {
+			return this.saves[0];
+		}
 
-        addSave(str) {
-            // Just overwriting a single slot for now, but keeping the idea of multiple saves for structure
-            this.saves = [
-                {
-                    date: new Date(),
-                    str,
-                }
-            ];
+		addSave(str) {
+			// Just overwriting a single slot for now, but keeping the idea of multiple saves for structure
+			this.saves = [
+				{
+					date: new Date(),
+					str,
+				}
+			];
 
-            this.saveToLocalStorage();
-        }
+			this.saveToLocalStorage();
+		}
 
-        saveToLocalStorage() {
-            localStorage.setItem(currentSaveSet, JSON.stringify(this.saves.map(x => ({
-                ...x,
-                date: JSON.stringify(x.date),
-            }))))
-        }
-    }
+		saveToLocalStorage() {
+			localStorage.setItem(currentSaveSet, JSON.stringify(this.saves.map(x => ({
+				...x,
+				date: JSON.stringify(x.date),
+			}))))
+		}
+	}
 
-    const saveHandler = new SaveHandler();
+	const saveHandler = new SaveHandler();
 
-    const cmd_prefix = '[atcmd]';
-    const save_cmd = 'save:';
+	const cmd_prefix = '[atcmd]';
+	const save_cmd = 'save:';
 
-    const logRoot = console.log;
-    console.log = (...args) => {
-        if (Array.isArray(args) && args.length === 1) {
-            const first = args[0];
-            if (typeof(first) == 'string' && first.startsWith(cmd_prefix)) {
-                cmd = first.substring(cmd_prefix.length);
-                if (cmd.startsWith(save_cmd)) {
-                    strToSave = cmd.substring(save_cmd.length);
-                    logRoot('asked to save ', strToSave);
-                    saveHandler.addSave(strToSave);
-                }
+	const logRoot = console.log;
+	console.log = (...args) => {
+		if (Array.isArray(args) && args.length === 1) {
+			const first = args[0];
+			if (typeof(first) == 'string' && first.startsWith(cmd_prefix)) {
+				cmd = first.substring(cmd_prefix.length);
+				if (cmd.startsWith(save_cmd)) {
+					strToSave = cmd.substring(save_cmd.length);
+					logRoot('asked to save ', strToSave);
+					saveHandler.addSave(strToSave);
+				}
 
-                return;
-            }
-        }
+				return;
+			}
+		}
 
-        logRoot(...args);
-    };
+		logRoot(...args);
+	};
 
-    function getInitParams() {
-        if (saveHandler.hasSaves()) {
-            return [ '-p', saveHandler.getLatestSave().str ];
-        }
+	function getInitParams() {
+		if (saveHandler.hasSaves()) {
+			return [ '-p', saveHandler.getLatestSave().str ];
+		}
 
-        return [];
-    }
+		return [];
+	}
 
-    // end @ajbowen249's customizations
+	// end @ajbowen249's customizations
 	// options
 
 	// fullscreen, sound, close button at top when playing on touchscreen
@@ -716,9 +716,9 @@
 		e.type = "application/javascript";
 		e.src = "index.js";
 		e.id = "e_script";
-        // end @ajbowen249's customizations
-        Module["arguments"] = getInitParams();
-        // end @ajbowen249's customizations
+		// end @ajbowen249's customizations
+		Module["arguments"] = getInitParams();
+		// end @ajbowen249's customizations
 		
 		document.body.appendChild(e); // load and run
 
@@ -976,49 +976,49 @@
 	requestAnimationFrame(p8_update_gamepads);
 
 	// End of gamepad code
-    // @ajbowen249's customizations
+	// @ajbowen249's customizations
 
-    function remapWasd(eventName) {
-        function remap(event, key, keyCode) {
-            event.stopImmediatePropagation();
-            const newEvent = new KeyboardEvent(eventName, {
-                ...event,
-                key,
-                code: 'Key'+key.toUpperCase(),
-                keyCode,
-                which: keyCode,
-            });
+	function remapWasd(eventName) {
+		function remap(event, key, keyCode) {
+			event.stopImmediatePropagation();
+			const newEvent = new KeyboardEvent(eventName, {
+				...event,
+				key,
+				code: 'Key'+key.toUpperCase(),
+				keyCode,
+				which: keyCode,
+			});
 
-            newEvent.wasRemapped = true;
-            document.dispatchEvent(newEvent);
-        }
+			newEvent.wasRemapped = true;
+			document.dispatchEvent(newEvent);
+		}
 
-        document.addEventListener(eventName, function(event) {
-            if (event.wasRemapped) {
-                return;
-            }
+		document.addEventListener(eventName, function(event) {
+			if (event.wasRemapped) {
+				return;
+			}
 
-            switch (event.keyCode) {
-            case 87: // W
-                remap(event, 'e', 69);
-                break;
-            case 65: // A
-                remap(event, 's', 83);
-                break;
-            case 83: // S
-                remap(event, 'd', 68);
-                break;
-            case 68: // D
-                remap(event, 'f', 70);
-                break;
-            }
-        });
-    }
+			switch (event.keyCode) {
+			case 87: // W
+				remap(event, 'e', 69);
+				break;
+			case 65: // A
+				remap(event, 's', 83);
+				break;
+			case 83: // S
+				remap(event, 'd', 68);
+				break;
+			case 68: // D
+				remap(event, 'f', 70);
+				break;
+			}
+		});
+	}
 
-    remapWasd('keydown');
-    remapWasd('keyup');
+	remapWasd('keydown');
+	remapWasd('keyup');
 
-    // end @ajbowen249's customizations
+	// end @ajbowen249's customizations
 
 
 	// key blocker. prevent browser operations while playing cart so that PICO-8 can use those keys e.g. cursors to scroll, ctrl-r to reload
@@ -1134,6 +1134,15 @@ canvas{
 </STYLE>
 
 </head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3WD2SS9GQ1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3WD2SS9GQ1');
+</script>
 
 <body style="padding:0px; margin:0px; background-color:#222; color:#ccc">
 <div id="body_0"> <!-- hide this when playing in mobile (p8_touch_detected) so that elements don't affect layout -->
