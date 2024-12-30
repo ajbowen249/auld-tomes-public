@@ -1,6 +1,7 @@
-# The Auld Tomes
- Play the demo [here!](https://ajbowen249.github.io/auld-tomes-public/)
+# Þe Auld Tomes
+Play the demo [here!](https://ajbowen249.github.io/auld-tomes-public/)
 
+[How to Play](https://github.com/ajbowen249/auld-tomes-public/blob/main/how_to.md)
 
 | | | |
 |-|-|-|
@@ -8,4 +9,4 @@
 |![auld_sandbox_3](/gh_media/auld_sandbox_3.png)|![auld_sandbox_9](/gh_media/auld_sandbox_9.png)|![auld_sandbox_5](/gh_media/auld_sandbox_5.png)|
 |![auld_sandbox_6](/gh_media/auld_sandbox_6.png)|![auld_sandbox_7](/gh_media/auld_sandbox_7.png)|![auld_sandbox_8](/gh_media/auld_sandbox_8.png)|
 
-The Auld Tomes: Bamboozling is a first-person Action RPG in development for [PICO-8](https://www.lexaloffle.com/pico-8.php). That project is closed-source, and this repository is meant for public-facing resources. This main branch will act as a directory and FAQ, while orphaned branches contain the github.io site.
+*Þe Auld Tomes: Bamboozling* is a first-person Action RPG in development for [PICO-8](https://www.lexaloffle.com/pico-8.php). That project is closed-source, and this repository is meant for public-facing resources. This main branch will act as a directory and FAQ, while orphaned branches contain the github.io site.
