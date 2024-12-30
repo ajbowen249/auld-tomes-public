@@ -18,7 +18,7 @@ If desired, the `Arrow Keys` may also be used to walk and turn, and to navigate 
 
 ### Mobile
 
-Use the `✥` to walk and turn.
+Use `✥` to walk and turn.
 
 Use `X` to interact with doors and NPCs when prompted. When unarmed or equipped with a melee weapon, press `X` when prompted to attack. Press `X` at any time with a ranged attack (such as a spell) equipped to fire forward.
 
